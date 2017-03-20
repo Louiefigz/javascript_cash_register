@@ -1,7 +1,8 @@
 $(document).ready(function(){
 
   var register = {'1': '0 ', '2': '0', '5': '6', '10': '2', '20': '1'}
-  var den = [1, 2, 5, 10, 20]
+  var den = [20, 10, 5, 2, 1]
+
   updateDom()
   keyups()
 
@@ -108,9 +109,10 @@ function setNumber(index){
 
   $('.changeAmount').on('submit', function(event){
     event.preventDefault();
+    var unchangedRegister = Object.assign({}, register);
       clearMessage();
       if( (!isNaN($('#dollarAmountForChange').val())) && ($('#dollarAmountForChange').val() >=0) && (parseInt($('#dollarAmountForChange').val()) <= parseInt($('#totalRegister b').html())) && (Math.floor($('#dollarAmountForChange').val()) == $('#dollarAmountForChange').val())  ){
-         makeChange(parseInt($('#dollarAmountForChange').val()))
+         makeChange(parseInt($('#dollarAmountForChange').val()), unchangedRegister)
       } else if( isNaN($('#dollarAmountForChange').val()) ) {
         console.log("Must be a number")
         $('#changeError').html("Must be number");
@@ -133,17 +135,12 @@ function setNumber(index){
     $('#changeError').html('');
   }
 
-function makeChange(change){
-
+function makeChange(change, unchangedRegister){
   this.change = change;
-  var unchangedRegister = Object.assign({}, register)
-
-  den.sort(function (a, b) {  return a + b;  });
   den.forEach(function(den){
-    if ( (parseInt(register[den]) > 0) &&  (this.change/den > 1) ){
-      console.log(this.change/den > 1)
+    // if the denomination left is more than 0 and it is divisible by the change amount.
+    if ( (parseInt(register[den]) > 0) &&  (this.change/den >= 1) ){
       if ( parseInt(register[den]) >=  Math.floor(this.change/den)){
-        console.log(this.change)
         register[den] = (register[den] - Math.floor(this.change/den)).toString();
           this.change = this.change - (Math.floor(this.change/den)* den)
       } else {
@@ -154,10 +151,11 @@ function makeChange(change){
     }
   })
   if (this.change==0){
-
     keyups();
     updateTotalDom();
+    clearMessage();
     changedValues = {}
+
     den.forEach(function(index){
       if ( unchangedRegister[index] !== register[index] ){
         var number = setNumber(index);
