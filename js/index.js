@@ -142,9 +142,10 @@ function makeChange(change, unchangedRegister){
     if ( (parseInt(register[den]) > 0) &&  (this.change/den >= 1) ){
       if ( parseInt(register[den]) >=  Math.floor(this.change/den)){
         register[den] = (register[den] - Math.floor(this.change/den)).toString();
+
           this.change = this.change - (Math.floor(this.change/den)* den)
       } else {
-        console.log(this.change)
+
         this.change = this.change - (register[den] * den)
         register[den] = "0"
       }
@@ -160,6 +161,13 @@ function makeChange(change, unchangedRegister){
       if ( unchangedRegister[index] !== register[index] ){
         var number = setNumber(index);
         var quantityChanged = unchangedRegister[index]-register[index]
+        if ($('#'+ number + ' input').attr('value') === "" || $('#'+ number+ ' input').attr('value') == undefined){
+          var value =  "0"
+        } else {
+          var value = $('#'+ number+ ' input').attr('value')
+        }
+
+        $('#'+number+ ' input').val(value)
         console.log(number)
         // changedValues[number] = (unchangedRegister[index] - register[index]);
         $('#successMessage').append("<li>" + quantityChanged +" - "+ number +"'s"+ "</li>");
