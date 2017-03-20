@@ -139,41 +139,56 @@ function setNumber(index){
 
 function makeChange(change, unchangedRegister){
   this.change = change;
+  this.change = changeDivisible(this.change);
+  updateAfterChange(this.change, unchangedRegister);
+
+}
+
+function changeDivisible(change){
   den.forEach(function(den){
-    // if the denomination left is more than 0 and it is divisible by the change amount.
-    if ( (parseInt(register[den]) > 0) &&  (this.change/den >= 1) ){
-      if ( parseInt(register[den]) >=  Math.floor(this.change/den)){
-        register[den] = (register[den] - Math.floor(this.change/den)).toString();
-
-          this.change = this.change - (Math.floor(this.change/den)* den)
+    // if the denomination left is more than 0 and it is divisible by the change amount
+    // it means that we may have enough of that denomination to subtract from the total change amount.
+    if ( (parseInt(register[den]) > 0) &&  (change/den >= 1) ){
+      // This makes sure that the quantity of the register denomination is >= the number of input/denomination.
+      if ( parseInt(register[den]) >=  Math.floor(change/den)){
+        // updating the register with the new quantity
+        register[den] = (register[den] - Math.floor(change/den)).toString();
+        // updating the change to the new value
+          change = change - (Math.floor(change/den)* den)
       } else {
-
-        this.change = this.change - (register[den] * den)
+        // This is enabled when the register does not have enough quantity of that denomination.
+        // we would essentially be updating the remaining change and setting the register denomination quantity to 0.
+        change = change - (register[den] * den)
         register[den] = "0"
       }
     }
   })
-  if (this.change==0){
+  // must return a value since it was called in makeChange()
+  return change
+}
+
+
+function updateAfterChange(change, unchangedRegister){
+  // if Change is equal to 0, this means that we should update the DOM with the updated values.
+  if (change==0){
     keyups();
     updateTotalDom();
     clearMessage();
-    changedValues = {}
 
     den.forEach(function(index){
+      // using the copy of the old register to check if there is a change in the current register
       if ( unchangedRegister[index] !== register[index] ){
         var number = setNumber(index);
+        // documenting the quantity change below and displaying them
         var quantityChanged = unchangedRegister[index]-register[index]
         if ($('#'+ number + ' input').attr('value') === "" || $('#'+ number+ ' input').attr('value') == undefined){
           var value =  "0"
         } else {
           var value = $('#'+ number+ ' input').attr('value')
         }
-
         $('#'+number+ ' input').val(value)
-        console.log(number)
         // changedValues[number] = (unchangedRegister[index] - register[index]);
         $('#successMessage').append("<li>" + quantityChanged +" - "+ number +"'s"+ "</li>");
-
       }
     })
   } else {
