@@ -28,7 +28,7 @@ function updateTotalDom(){
 }
 
 function updateQuantity(){
-  $('#ones').html('<input id="keyup1" value='+ register["1"]+ ' />' );
+  $('#one').html('<input id="keyup1" value='+ register["1"]+ ' />' );
   $('#two').html('<input id="keyup2" value='+ register["2"]+ ' />');
   $('#five').html('<input id="keyup5" value='+ register["5"]+ ' />');
   $('#ten').html('<input id="keyup10" value='+ register["10"]+ ' />');
@@ -36,7 +36,7 @@ function updateQuantity(){
 }
 
 function clearQuantity(){
-  $('#ones').html('');
+  $('#one').html('');
   $('#two').html('');
   $('#five').html('');
   $('#ten').html('');
